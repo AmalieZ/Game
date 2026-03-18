@@ -10,7 +10,7 @@ coinImg.src = "https://freesvg.org/img/Gold-Coin.png";
 const canvas = document.getElementById("game");
 const ctx = canvas.getContext("2d");
 
-let gravity = 0.6;
+let gravity = 0.5;
 let score = 0;
 let keys = {};
 let level = 0;
@@ -144,7 +144,7 @@ function update(){
         level++;
 
         if(level >= levels.length){
-            alert("Vyhrál jsi celou hru!");
+            alert("You won");
             level = 0;
             score = 0;
         }
