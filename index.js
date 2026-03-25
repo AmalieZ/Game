@@ -27,6 +27,7 @@ let player = {
     jumps: 0
 };
 
+//levely
 let levels = [
     {
         platforms: [
@@ -83,6 +84,7 @@ let levels = [
 
 ];
 
+//aktuální data levelu
 let platforms = levels[level].platforms;
 let coins = levels[level].coins;
 let goal = levels[level].goal;
@@ -92,8 +94,9 @@ document.addEventListener("keyup", e => keys[e.key] = false);
 
 function update(){
 
-    player.vx = 0;
+    player.vx = 0; //reset pohybu
 
+    //pohyb doprava a doleva
     if(keys["ArrowLeft"]) player.vx = -player.speed;
     if(keys["ArrowRight"]) player.vx = player.speed;
 
@@ -101,17 +104,21 @@ function update(){
         player.vx *= 2;
     }
 
+    //double jump
     if(keys["ArrowUp"] && player.jumps < 2){
         player.vy = -player.jump;
         player.jumps++;
-        keys["ArrowUp"] = false;
+        keys["ArrowUp"] = false; //zabrání držení
     }
 
+    //gravitace
     player.vy += gravity;
 
+    //posun hráče
     player.x += player.vx;
     player.y += player.vy;
 
+    //kolice s platformou
     platforms.forEach(p=>{
         if(player.x < p.x+p.w &&
           player.x+player.w > p.x &&
@@ -120,11 +127,12 @@ function update(){
             if(player.vy > 0){
                 player.y = p.y - player.h;
                 player.vy = 0;
-                player.jumps = 0;
+                player.jumps = 0; //reset skoků
             }
         }
     });
 
+    //sbírání mincí
     coins.forEach(c=>{
         if(!c.collected &&
           player.x < c.x+20 &&
@@ -136,6 +144,7 @@ function update(){
         }
     });
 
+    //cíl levelu
     if(player.x < goal.x+goal.w &&
       player.x+player.w > goal.x &&
       player.y < goal.y+goal.h &&
@@ -143,20 +152,24 @@ function update(){
 
         level++;
 
+        //konec hry
         if(level >= levels.length){
             alert("You won");
             level = 0;
             score = 0;
         }
 
+        //načítání dalšího levelu
         platforms = levels[level].platforms;
         coins = levels[level].coins;
         goal = levels[level].goal;
 
+        //reset hráče
         player.x = 50;
         player.y = 300;
     }
 
+    //pád mimo mapu
     if(player.y > canvas.height){
         player.x = 50;
         player.y = 300;
@@ -166,6 +179,7 @@ function update(){
 
 function draw(){
 
+    //kamera sleduje hráče
     let cameraX = player.x - 200;
 
     ctx.clearRect(0,0,canvas.width,canvas.height);
@@ -181,7 +195,7 @@ function draw(){
             ctx.drawImage(coinImg, c.x, c.y, 20, 20);
     });
 
-    ctx.fillStyle = "gold";
+    ctx.fillStyle = "yellow";
     ctx.fillRect(goal.x, goal.y, goal.w, goal.h);
 
     ctx.drawImage(playerImg, player.x, player.y, player.w, player.h);
@@ -197,7 +211,7 @@ function draw(){
 function gameLoop(){
     update();
     draw();
-    requestAnimationFrame(gameLoop);
+    requestAnimationFrame(gameLoop); //opakování
 }
 
 gameLoop();
